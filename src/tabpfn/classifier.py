@@ -838,15 +838,18 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
                 output_batch = []
                 for i, batch_config in enumerate(config_list):
                     assert isinstance(batch_config, ClassifierEnsembleConfig)
-                    # make sure the processed_output num_classes are the same.
-                    if len(batch_config.class_permutation) != self.n_classes_:
-                        use_perm = np.arange(self.n_classes_)
-                        use_perm[: len(batch_config.class_permutation)] = (
-                            batch_config.class_permutation
-                        )
+                    if batch_config.class_permutation is None:
+                        output_batch.append(processed_output[:, i, : self.n_classes_])
                     else:
-                        use_perm = batch_config.class_permutation
-                    output_batch.append(processed_output[:, i, use_perm])
+                        # make sure the processed_output num_classes are the same.
+                        if len(batch_config.class_permutation) != self.n_classes_:
+                            use_perm = np.arange(self.n_classes_)
+                            use_perm[: len(batch_config.class_permutation)] = (
+                                batch_config.class_permutation
+                            )
+                        else:
+                            use_perm = batch_config.class_permutation
+                        output_batch.append(processed_output[:, i, use_perm])
 
                 output_all = torch.stack(output_batch, dim=1)
 
