@@ -651,11 +651,6 @@ class ShuffleFeaturesStep(FeaturePreprocessingTransformerStep):
         return X[:, self.index_permutation_]
 
 
-class NoneTransformer(FunctionTransformer):
-    def __init__(self) -> None:
-        super().__init__(func=_identity, inverse_func=_identity, check_inverse=False)
-
-
 class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
     """Reshape the feature distributions using different transformations."""
 
@@ -748,13 +743,13 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
                     ),
                     (
                         "ordinal",
-                        NoneTransformer(),
+                        FunctionTransformer(),
                         # "other" or "ordinal"
                         make_column_selector("ordinal*"),
                     ),
                     (
                         "normal",
-                        NoneTransformer(),
+                        FunctionTransformer(),
                         make_column_selector("normal*"),
                     ),
                 ],
@@ -830,7 +825,7 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
                 random_state=random_state,
             ),
             "robust": RobustScaler(unit_variance=True),
-            "none": FunctionTransformer(_identity),
+            "none": FunctionTransformer(),
             **get_all_kdi_transformers(),
         }
 
@@ -871,7 +866,7 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
             "scaler": make_standard_scaler_safe(("standard", StandardScaler())),
             "svd": FeatureUnion(
                 [
-                    ("passthrough", FunctionTransformer(func=_identity)),
+                    ("passthrough", FunctionTransformer()),
                     (
                         "svd",
                         Pipeline(
