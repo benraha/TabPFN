@@ -828,7 +828,7 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
             ),
             "robust": RobustScaler(unit_variance=True),
             # default FunctionTransformer yields the identity function
-            "none": FunctionTransformer(), 
+            "none": FunctionTransformer(),
             **get_all_kdi_transformers(),
         }
 
