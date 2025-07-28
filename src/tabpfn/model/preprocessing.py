@@ -743,12 +743,14 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
                     ),
                     (
                         "ordinal",
+                        # default FunctionTransformer yields the identity function
                         FunctionTransformer(),
                         # "other" or "ordinal"
                         make_column_selector("ordinal*"),
                     ),
                     (
                         "normal",
+                        # default FunctionTransformer yields the identity function
                         FunctionTransformer(),
                         make_column_selector("normal*"),
                     ),
@@ -825,7 +827,8 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
                 random_state=random_state,
             ),
             "robust": RobustScaler(unit_variance=True),
-            "none": FunctionTransformer(),
+            # default FunctionTransformer yields the identity function
+            "none": FunctionTransformer(), 
             **get_all_kdi_transformers(),
         }
 
@@ -866,6 +869,7 @@ class ReshapeFeatureDistributionsStep(FeaturePreprocessingTransformerStep):
             "scaler": make_standard_scaler_safe(("standard", StandardScaler())),
             "svd": FeatureUnion(
                 [
+                    # default FunctionTransformer yields the identity function
                     ("passthrough", FunctionTransformer()),
                     (
                         "svd",
