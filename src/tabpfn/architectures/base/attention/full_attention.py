@@ -564,9 +564,8 @@ class MultiHeadAttention(Attention):
                 )
 
                 device = torch.cuda.current_device()
-                capability = torch.cuda.get_device_capability(device)
-                nvidia_compute_capability = f"{capability[0]}.{capability[1]}"
-                USE_TORCH_2_GQA = capability[0] >= 8
+                nvidia_compute_capability = torch.cuda.get_device_capability(device)
+                USE_TORCH_2_GQA = nvidia_compute_capability[0] >= 8
 
             except (TypeError, RuntimeError):
                 pass
