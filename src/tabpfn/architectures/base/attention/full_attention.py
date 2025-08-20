@@ -534,6 +534,7 @@ class MultiHeadAttention(Attention):
         assert q is not None
         assert k is not None
         assert v is not None
+
         batch_size, seqlen_q, nhead, d_k = q.shape
         _, seqlen_kv, nhead_kv, d_v = v.shape
         share_kv_across_n_heads = nhead // nhead_kv
@@ -547,11 +548,9 @@ class MultiHeadAttention(Attention):
         )
 
         # this string comparison is reliable, as it does not compare to a subversion
-        TORCH_2_ATTENTION_POSSIBLE = (
-            torch.__version__ >= "2" and torch.cuda.is_available()
-        )
+        TORCH_2_ATTENTION_POSSIBLE = torch.__version__ >= "2"
         USE_TORCH_2_GQA = False
-        if TORCH_2_ATTENTION_POSSIBLE:
+        if TORCH_2_ATTENTION_POSSIBLE and torch.cuda.is_available():
             # check whether torch.nn.functional.scaled_dot_product_attention has a
             # kwarg enable_gqa
             # Check if enable_gqa is supported by trying to call the function with
@@ -563,17 +562,14 @@ class MultiHeadAttention(Attention):
                     torch.empty(1, 1, 1, 1),
                     enable_gqa=True,
                 )
-                TORCH_2_SUPPORTS_GQ = True
-            except (TypeError, RuntimeError):
-                TORCH_2_SUPPORTS_GQ = False
 
-            if torch.cuda.is_available():
                 device = torch.cuda.current_device()
                 capability = torch.cuda.get_device_capability(device)
                 nvidia_compute_capability = f"{capability[0]}.{capability[1]}"
-            else:
-                nvidia_compute_capability = None
-            USE_TORCH_2_GQA = nvidia_compute_capability >= "8" and TORCH_2_SUPPORTS_GQ
+                USE_TORCH_2_GQA = nvidia_compute_capability >= "8"
+
+            except (TypeError, RuntimeError):
+                pass
 
             # TODO: add logging for something like this
             # if use_flash_attention and USE_TORCH_2_GQA:
@@ -675,6 +671,7 @@ class MultiHeadAttention(Attention):
                 )
             else:
                 extra_inputs["enable_gqa"] = True
+
             attention_head_outputs = torch.nn.functional.scaled_dot_product_attention(
                 q.transpose(1, 2),
                 k.transpose(1, 2),
