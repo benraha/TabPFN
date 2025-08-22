@@ -58,7 +58,7 @@ def _gqa_is_supported() -> bool:
 
 
 # Cache the GQA support check at module level
-USE_TORCH_2_GQA = _check_torch_gqa_support()
+USE_TORCH_2_GQA = _gqa_is_supported()
 
 
 class MultiHeadAttention(Attention):
