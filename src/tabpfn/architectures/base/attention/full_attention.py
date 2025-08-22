@@ -33,7 +33,7 @@ TORCH_VERSION = torch.__version__.split(".")
 TORCH_2_ATTENTION_POSSIBLE = int(TORCH_VERSION[0]) >= 2
 
 
-def _check_torch_gqa_support() -> bool:
+def _gqa_is_supported() -> bool:
     """Check if PyTorch's scaled_dot_product_attention supports enable_gqa parameter.
 
     This checks whether torch.nn.functional.scaled_dot_product_attention has a
