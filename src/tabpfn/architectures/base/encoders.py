@@ -223,6 +223,8 @@ def select_features(x: torch.Tensor, sel: torch.Tensor) -> torch.Tensor:
     and arrange them contiguously in the last dimension.
     If batch size is bigger than 1, we pad the features with zeros to make the number of features fixed.
 
+    Note: This function modifies the input tensor `x` in-place when the batch size is greater than 1.
+
     Args:
         x: The input tensor of shape (sequence_length, batch_size, total_features)
         sel: The boolean selection mask indicating which features to keep of shape (batch_size, total_features)
@@ -231,6 +233,7 @@ def select_features(x: torch.Tensor, sel: torch.Tensor) -> torch.Tensor:
         The tensor with selected features.
         The shape is (sequence_length, batch_size, number_of_selected_features) if batch_size is 1.
         The shape is (sequence_length, batch_size, total_features) if batch_size is greater than 1.
+
     """
     B, total_features = sel.shape
 
