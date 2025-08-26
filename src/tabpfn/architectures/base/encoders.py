@@ -595,11 +595,7 @@ class NanHandlingEncoderStep(SeqEncStep):
 
 
 class RemoveEmptyFeaturesEncoderStep(SeqEncStep):
-    """Encoder step to remove empty (constant) features.
-    Was changed to NOT DO ANYTHING(?), the removal of empty features now
-    done elsewhere, but the saved model still needs this encoder step.
-    TODO: REMOVE.
-    """
+    """Encoder step to remove empty (constant) features."""
 
     def __init__(self, **kwargs: Any):
         """Initialize the RemoveEmptyFeaturesEncoderStep.
