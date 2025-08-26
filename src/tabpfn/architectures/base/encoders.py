@@ -242,19 +242,17 @@ def select_features(x: torch.Tensor, sel: torch.Tensor) -> torch.Tensor:
     if B == 1:
         return x[:, :, sel[0]]
 
-    new_x = x.detach().clone()
-
     # For each batch, compute the number of selected features.
-    sel_counts = sel.sum(dim=-1)  # shape: (B,)
+    selected_features_per_batch = sel.sum(dim=-1)  # shape: (B,)
 
     for b in range(B):
-        s = int(sel_counts[b])
+        s = int(selected_features_per_batch[b])
         if s != total_features:
             if s > 0:
-                new_x[:, b, :s] = x[:, b, sel[b]]
-            new_x[:, b, s:] = 0
+                x[:, b, :s] = x[:, b, sel[b]]
+            x[:, b, s:] = 0
 
-    return new_x
+    return x
 
 
 def remove_outliers(
